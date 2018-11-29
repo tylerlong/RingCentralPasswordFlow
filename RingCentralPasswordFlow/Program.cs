@@ -23,10 +23,21 @@ namespace RingCentralPasswordFlow
                     Environment.GetEnvironmentVariable("RINGCENTRAL_PASSWORD")
                 ).Result;
                 Console.WriteLine(token);
+
+                var subscription = rc.Restapi().Subscription().New();
+                subscription.EventFilters.Add("/restapi/v1.0/account/~/extension/~/message-store");
+                subscription.NotificationEvent += (sender, ags) => {
+                    var message = ags.message;
+                    Console.WriteLine(message);
+                };
+                var result = subscription.Register().Result;
+                Console.WriteLine(result);
             } catch(AggregateException ae) {
                 var fhe = ae.InnerException as FlurlHttpException;
                 var message = fhe.GetResponseStringAsync();
                 Console.WriteLine(message);
+            }finally {
+                rc.Revoke();
             }
         }
     }
