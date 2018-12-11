@@ -25,7 +25,7 @@ namespace RingCentralPasswordFlow
                 Console.WriteLine(token);
             } catch(AggregateException ae) {
                 var fhe = ae.InnerException as FlurlHttpException;
-                var message = fhe.GetResponseStringAsync();
+                var message = fhe.GetResponseStringAsync().Result;
                 Console.WriteLine(message);
             }
         }
